@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pre-Study Survey - Social Engineering AI</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        .header {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+        }
+        
+        h1 {
+            color: #2d3748;
+            font-size: 32px;
+            margin-bottom: 10px;
+        }
+        
+        .card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        
+        .form-group {
+            margin-bottom: 25px;
+        }
+        
+        .form-group label {
+            display: block;
+            color: #2d3748;
+            font-weight: 600;
+            margin-bottom: 10px;
+            font-size: 16px;
+        }
+        
+        .form-group input[type="text"],
+        .form-group input[type="number"],
+        .form-group select {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e2e8f0;
+            border-radius: 10px;
+            font-size: 16px;
+            transition: all 0.3s;
+        }
+        
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102,126,234,0.1);
+        }
+        
+        .radio-group {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        
+        .radio-item {
+            display: flex;
+            align-items: center;
+            padding: 12px;
+            background: #f7fafc;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .radio-item:hover {
+            background: #edf2f7;
+        }
+        
+        .radio-item input {
+            margin-right: 10px;
+            cursor: pointer;
+        }
+        
+        .radio-item.selected {
+            background: #e6f3ff;
+            border: 2px solid #667eea;
+        }
+        
+        .radio-item input:checked {
+            accent-color: #667eea;
+        }
+        
+        .submit-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 18px 40px;
+            border: none;
+            border-radius: 12px;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            width: 100%;
+            transition: all 0.3s;
+            box-shadow: 0 5px 15px rgba(102,126,234,0.3);
+        }
+        
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(102,126,234,0.4);
+        }
+        
+        .section-title {
+            color: #2d3748;
+            font-size: 20px;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #e2e8f0;
+        }
+    </style>
+</head>
+<body>
+    {% include 'language_selector.html' %}
+    <div class="container">
+        <div class="header">
+            <h1>📋 {{ t('pre_survey_title', lang) }}</h1>
+            <p style="color: #718096; margin-top: 10px;">{{ t('please_complete_before', lang) }}</p>
+        </div>
+        
+        <form id="surveyForm" onsubmit="handleSubmit(event)">
+            <div class="card">
+                <h2 class="section-title">{{ t('demographics', lang) }}</h2>
+                
+                <div class="form-group">
+                    <label>1. {{ t('age', lang) }}</label>
+                    <input type="number" name="age" min="18" max="100" required>
+                </div>
+                
+                <div class="form-group">
+                    <label>2. {{ t('gender', lang) }}</label>
+                    <div class="radio-group">
+                        <div class="radio-item">
+                            <input type="radio" name="gender" value="male" required>
+                            <span>{{ t('male', lang) }}</span>
+                        </div>
+                        <div class="radio-item">
+                            <input type="radio" name="gender" value="female">
+                            <span>{{ t('female', lang) }}</span>
+                        </div>
+                        <div class="radio-item">
+                            <input type="radio" name="gender" value="other">
+                            <span>{{ t('other', lang) }}</span>
+                        </div>
+                        <div class="radio-item">
+                            <input type="radio" name="gender" value="prefer_not_to_say">
+                            <span>{{ t('prefer_not_to_say', lang) }}</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label>3. {{ t('education_level', lang) }}</label>
+                    <select name="education" required>
+                        <option value="">{{ t('select', lang) }}</option>
+                        <option value="high_school">{{ t('high_school', lang) }}</option>
+                        <option value="some_college">{{ t('some_college', lang) }}</option>
+                        <option value="bachelors">{{ t('bachelors', lang) }}</option>
+                        <option value="masters">{{ t('masters', lang) }}</option>
+                        <option value="doctoral">{{ t('doctoral', lang) }}</option>
+                        <option value="other">{{ t('other', lang) }}</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label>4. {{ t('email_usage_frequency', lang) }}</label>
+                    <div class="radio-group">
+                        <div class="radio-item">
+                            <input type="radio" name="email_frequency" value="multiple_daily" required>
+                            <span>{{ t('multiple_times_per_day', lang) }}</span>
+                        </div>
+                        <div class="radio-item">
+                            <input type="radio" name="email_frequency" value="once_daily">
+                            <span>{{ t('once_per_day', lang) }}</span>
+                        </div>
+                        <div class="radio-item">
+                            <input type="radio" name="email_frequency" value="few_weekly">
+                            <span>{{ t('few_times_per_week', lang) }}</span>
+                        </div>
+                        <div class="radio-item">
+                            <input type="radio" name="email_frequency" value="once_weekly">
+                            <span>{{ t('once_per_week', lang) }}</span>
+                        </div>
+                        <div class="radio-item">
+                            <input type="radio" name="email_frequency" value="less_weekly">
+                            <span>{{ t('less_than_once_per_week', lang) }}</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label>5. {{ t('years_of_email_experience', lang) }}</label>
+                    <input type="number" name="email_experience" min="0" max="50" required>
+                </div>
+            </div>
+            
+            <div class="card">
+                <h2 class="section-title">{{ t('cybersecurity_awareness', lang) }}</h2>
+                
+                <div class="form-group">
+                    <label>6. {{ t('how_familiar_phishing', lang) }}</label>
+                    <div class="radio-group">
+                        <div class="radio-item">
+                            <input type="radio" name="phishing_familiarity" value="very_familiar" required>
+                            <span>{{ t('very_familiar', lang) }}</span>
+                        </div>
+                        <div class="radio-item">
+                            <input type="radio" name="phishing_familiarity" value="somewhat_familiar">
+                            <span>{{ t('somewhat_familiar', lang) }}</span>
+                        </div>
+                        <div class="radio-item">
+                            <input type="radio" name="phishing_familiarity" value="not_very_familiar">
+                            <span>{{ t('not_very_familiar', lang) }}</span>
+                        </div>
+                        <div class="radio-item">
+                            <input type="radio" name="phishing_familiarity" value="not_familiar">
+                            <span>{{ t('not_familiar_at_all', lang) }}</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label>7. {{ t('phishing_received', lang) }}</label>
+                    <div class="radio-group">
+                        <div class="radio-item">
+                            <input type="radio" name="phishing_received" value="many_times" required>
+                            <span>{{ t('yes_many_times', lang) }}</span>
+                        </div>
+                        <div class="radio-item">
+                            <input type="radio" name="phishing_received" value="few_times">
+                            <span>{{ t('yes_few_times', lang) }}</span>
+                        </div>
+                        <div class="radio-item">
+                            <input type="radio" name="phishing_received" value="once_twice">
+                            <span>{{ t('yes_once_twice', lang) }}</span>
+                        </div>
+                        <div class="radio-item">
+                            <input type="radio" name="phishing_received" value="never">
+                            <span>{{ t('no_never', lang) }}</span>
+                        </div>
+                        <div class="radio-item">
+                            <input type="radio" name="phishing_received" value="not_sure">
+                            <span>{{ t('not_sure', lang) }}</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label>8. {{ t('confidence_identifying', lang) }}</label>
+                    <div class="radio-group">
+                        <div class="radio-item">
+                            <input type="radio" name="confidence" value="very_confident" required>
+                            <span>{{ t('very_confident', lang) }}</span>
+                        </div>
+                        <div class="radio-item">
+                            <input type="radio" name="confidence" value="somewhat_confident">
+                            <span>{{ t('somewhat_confident', lang) }}</span>
+                        </div>
+                        <div class="radio-item">
+                            <input type="radio" name="confidence" value="not_very_confident">
+                            <span>{{ t('not_very_confident', lang) }}</span>
+                        </div>
+                        <div class="radio-item">
+                            <input type="radio" name="confidence" value="not_confident">
+                            <span>{{ t('not_confident_at_all', lang) }}</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card">
+                <h2 class="section-title">{{ t('technology_comfort', lang) }}</h2>
+                
+                <div class="form-group">
+                    <label>9. {{ t('how_comfortable_tech', lang) }}</label>
+                    <div class="radio-group">
+                        <div class="radio-item">
+                            <input type="radio" name="tech_comfort" value="very_comfortable" required>
+                            <span>{{ t('very_comfortable', lang) }}</span>
+                        </div>
+                        <div class="radio-item">
+                            <input type="radio" name="tech_comfort" value="somewhat_comfortable">
+                            <span>{{ t('somewhat_comfortable', lang) }}</span>
+                        </div>
+                        <div class="radio-item">
+                            <input type="radio" name="tech_comfort" value="not_very_comfortable">
+                            <span>{{ t('not_very_comfortable', lang) }}</span>
+                        </div>
+                        <div class="radio-item">
+                            <input type="radio" name="tech_comfort" value="not_comfortable">
+                            <span>{{ t('not_comfortable_at_all', lang) }}</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card">
+                <button type="submit" class="submit-btn">{{ t('submit_survey', lang) }}</button>
+            </div>
+        </form>
+    </div>
+    
+    <script>
+        // Ensure radio buttons are clickable
+        document.addEventListener('DOMContentLoaded', function() {
+            const radioItems = document.querySelectorAll('.radio-item');
+            radioItems.forEach(item => {
+                item.addEventListener('click', function(e) {
+                    const radio = this.querySelector('input[type="radio"]');
+                    if (radio && !radio.disabled) {
+                        // Uncheck all radios in the same group and remove selected class
+                        const name = radio.name;
+                        document.querySelectorAll(`input[name="${name}"]`).forEach(r => {
+                            r.checked = false;
+                            r.closest('.radio-item')?.classList.remove('selected');
+                        });
+                        // Check this radio and add selected class
+                        radio.checked = true;
+                        item.classList.add('selected');
+                        // Trigger change event
+                        radio.dispatchEvent(new Event('change', { bubbles: true }));
+                    }
+                });
+            });
+            
+            // Update selected state when radio changes
+            document.querySelectorAll('.radio-item input[type="radio"]').forEach(radio => {
+                radio.addEventListener('change', function() {
+                    const name = this.name;
+                    document.querySelectorAll(`input[name="${name}"]`).forEach(r => {
+                        r.closest('.radio-item')?.classList.remove('selected');
+                    });
+                    if (this.checked) {
+                        this.closest('.radio-item')?.classList.add('selected');
+                    }
+                });
+            });
+        });
+
+        function handleSubmit(event) {
+            event.preventDefault();
+            
+            // Validate form
+            const form = event.target;
+            if (!form.checkValidity()) {
+                form.reportValidity();
+                return;
+            }
+            
+            const formData = new FormData(form);
+            const data = Object.fromEntries(formData);
+            
+            // Check if all required fields are filled
+            const requiredFields = form.querySelectorAll('[required]');
+            let allFilled = true;
+            requiredFields.forEach(field => {
+                if (field.type === 'radio') {
+                    const name = field.name;
+                    const checked = form.querySelector(`input[name="${name}"]:checked`);
+                    if (!checked) {
+                        allFilled = false;
+                        field.closest('.form-group').style.border = '2px solid #ff6b6b';
+                    }
+                } else if (!field.value.trim()) {
+                    allFilled = false;
+                    field.style.borderColor = '#ff6b6b';
+                }
+            });
+            
+            if (!allFilled) {
+                const fillRequired = '{{ t("please_fill_required", lang) }}';
+                alert(fillRequired);
+                return;
+            }
+            
+            // Add participant ID if available
+            const enterParticipantId = '{{ t("enter_participant_id", lang) }}';
+            const participantId = prompt(enterParticipantId, 'participant_001') || 'participant_001';
+            data.participant_id = participantId;
+            data.survey_type = 'pre_study';
+            data.timestamp = new Date().toISOString();
+            
+            // Disable submit button
+            const submitBtn = form.querySelector('button[type="submit"]');
+            submitBtn.disabled = true;
+            const submittingText = '{{ t("loading", lang) if lang == "tr" else "Submitting..." }}';
+            submitBtn.textContent = submittingText;
+            
+            fetch('/survey/submit', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(data)
+            })
+            .then(response => {
+                if (!response.ok) {
+                    return response.json().then(err => {
+                        throw new Error(err.error || `HTTP error! status: ${response.status}`);
+                    });
+                }
+                return response.json();
+            })
+            .then(result => {
+                if (result.status === 'success' || result.status === 'submitted') {
+                    const successText = '{{ t("survey_submitted", lang) }}\n\n{{ t("thank_you_participating", lang) }}';
+                    alert(successText);
+                    window.location.href = '/';
+                } else {
+                    throw new Error(result.error || '{{ t("error", lang) }}');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                const errorText = '{{ t("error", lang) }}: ' + error.message + '\n\n{{ t("warning", lang) if lang == "tr" else "Please try again or contact the administrator." }}';
+                alert(errorText);
+                submitBtn.disabled = false;
+                submitBtn.textContent = '{{ t("submit_survey", lang) }}';
+            });
+        }
+    </script>
+</body>
+</html>
+

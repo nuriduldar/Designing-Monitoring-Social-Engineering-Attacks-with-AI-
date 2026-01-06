@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Train Detection Model - Social Engineering AI</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+        
+        .header {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+        }
+        
+        h1 {
+            color: #2d3748;
+            font-size: 32px;
+            margin-bottom: 10px;
+        }
+        
+        .back-btn {
+            display: inline-block;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 12px 25px;
+            border-radius: 10px;
+            text-decoration: none;
+            font-weight: 600;
+            margin-top: 15px;
+            transition: transform 0.3s;
+        }
+        
+        .back-btn:hover {
+            transform: translateY(-2px);
+        }
+        
+        .card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+        }
+        
+        .card h2 {
+            color: #2d3748;
+            font-size: 24px;
+            margin-bottom: 20px;
+        }
+        
+        .model-option {
+            background: #f7fafc;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            border-left: 4px solid #667eea;
+        }
+        
+        .model-option h3 {
+            color: #2d3748;
+            margin-bottom: 10px;
+        }
+        
+        .model-option p {
+            color: #718096;
+            margin-bottom: 15px;
+        }
+        
+        .btn {
+            padding: 12px 30px;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102,126,234,0.3);
+        }
+        
+        .btn-primary:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+        
+        .status-box {
+            background: #f7fafc;
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 20px;
+            display: none;
+        }
+        
+        .status-box.active {
+            display: block;
+        }
+        
+        .status-box.success {
+            background: #c6f6d5;
+            border-left: 4px solid #48bb78;
+        }
+        
+        .status-box.error {
+            background: #fed7d7;
+            border-left: 4px solid #f56565;
+        }
+        
+        .status-box.info {
+            background: #bee3f8;
+            border-left: 4px solid #4299e1;
+        }
+        
+        .progress-bar {
+            width: 100%;
+            height: 20px;
+            background: #e2e8f0;
+            border-radius: 10px;
+            overflow: hidden;
+            margin-top: 10px;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            width: 0%;
+            transition: width 0.3s;
+        }
+    </style>
+</head>
+<body>
+    {% include 'language_selector.html' %}
+    <div class="container">
+        <div class="header">
+            <h1>🤖 {{ t('train_model_title', lang) }}</h1>
+            <p style="color: #718096; margin-bottom: 15px;">{{ t('train_model_title', lang) if lang == 'tr' else 'Train TF-IDF + Logistic Regression or DistilBERT models' }}</p>
+            <a href="/" class="back-btn">{{ t('back_to_dashboard', lang) }}</a>
+        </div>
+        
+        <div class="card">
+            <h2>Model Options</h2>
+            
+            <div class="model-option">
+                <h3>1. TF-IDF + Logistic Regression</h3>
+                <p>Fast, lightweight model. Good for baseline detection. Requires scikit-learn.</p>
+                <button class="btn btn-primary" onclick="trainTfidfLR()">{{ t('train_tfidf', lang) }}</button>
+            </div>
+            
+            <div class="model-option">
+                <h3>2. DistilBERT</h3>
+                <p>Advanced transformer model. Better accuracy but requires more resources. Requires transformers and torch.</p>
+                <button class="btn btn-primary" onclick="trainDistilBERT()">{{ t('train_distilbert', lang) }}</button>
+            </div>
+            
+            <div class="status-box" id="statusBox">
+                <div id="statusContent"></div>
+                <div class="progress-bar" id="progressBar" style="display: none;">
+                    <div class="progress-fill" id="progressFill"></div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="card">
+            <h2>Training Data</h2>
+            <p style="color: #718096; margin-bottom: 15px;">
+                Using: <code>data/expanded_dataset.csv</code> (800+ samples)
+            </p>
+            <p style="color: #718096;">
+                Dataset contains: <code>id, label, text, source_type, tone, role, created_by</code><br>
+                <strong>Phish:</strong> 400 samples | <strong>Ham:</strong> 400 samples
+            </p>
+        </div>
+    </div>
+    
+    <script>
+        function showStatus(message, type = 'info') {
+            const statusBox = document.getElementById('statusBox');
+            const statusContent = document.getElementById('statusContent');
+            statusBox.className = `status-box active ${type}`;
+            statusContent.innerHTML = message;
+        }
+        
+        function showProgress(percent) {
+            const progressBar = document.getElementById('progressBar');
+            const progressFill = document.getElementById('progressFill');
+            progressBar.style.display = 'block';
+            progressFill.style.width = percent + '%';
+        }
+        
+        async function trainTfidfLR() {
+            const button = event.target;
+            button.disabled = true;
+            button.textContent = 'Training...';
+            
+            showStatus('Starting TF-IDF + Logistic Regression training...', 'info');
+            showProgress(10);
+            
+            try {
+                const response = await fetch('/api/model/train/tfidf-lr', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    }
+                });
+                
+                const result = await response.json();
+                showProgress(100);
+                
+                if (result.status === 'success') {
+                    showStatus(`
+                        <h3>✅ Training Completed!</h3>
+                        <p><strong>Accuracy:</strong> ${(result.metrics.accuracy * 100).toFixed(2)}%</p>
+                        <p><strong>Precision:</strong> ${(result.metrics.precision * 100).toFixed(2)}%</p>
+                        <p><strong>Recall:</strong> ${(result.metrics.recall * 100).toFixed(2)}%</p>
+                        <p><strong>F1-Score:</strong> ${(result.metrics.f1 * 100).toFixed(2)}%</p>
+                        <p><strong>Model saved to:</strong> ${result.model_path}</p>
+                    `, 'success');
+                } else {
+                    showStatus(`<h3>❌ Training Failed</h3><p>${result.message || result.error}</p>`, 'error');
+                }
+            } catch (error) {
+                showStatus(`<h3>❌ Error</h3><p>${error.message}</p>`, 'error');
+            } finally {
+                button.disabled = false;
+                button.textContent = 'Train TF-IDF + LR Model';
+            }
+        }
+        
+        async function trainDistilBERT() {
+            const button = event.target;
+            button.disabled = true;
+            button.textContent = 'Training...';
+            
+            showStatus('Starting DistilBERT training... This may take several minutes.', 'info');
+            showProgress(10);
+            
+            try {
+                const response = await fetch('/api/model/train/distilbert', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    }
+                });
+                
+                // Poll for progress (since training takes time)
+                const pollInterval = setInterval(async () => {
+                    const progressResponse = await fetch('/api/model/train/status');
+                    const progress = await progressResponse.json();
+                    if (progress.percent) {
+                        showProgress(progress.percent);
+                    }
+                }, 2000);
+                
+                const result = await response.json();
+                
+                if (result.status === 'started') {
+                    showStatus(`
+                        <h3>⏳ Training Started</h3>
+                        <p>${result.message}</p>
+                        <p><strong>Note:</strong> Training is running in the background. This page will check status automatically.</p>
+                    `, 'info');
+                    
+                    // Poll for completion
+                    const checkInterval = setInterval(async () => {
+                        try {
+                            const statusResponse = await fetch('/api/model/train/status');
+                            const status = await statusResponse.json();
+                            
+                            if (status.percent) {
+                                showProgress(status.percent);
+                            }
+                            
+                            if (status.status === 'completed') {
+                                clearInterval(checkInterval);
+                                clearInterval(pollInterval);
+                                showProgress(100);
+                                
+                                // Check model status
+                                const modelResponse = await fetch('/api/model/status');
+                                const modelStatus = await modelResponse.json();
+                                
+                                if (modelStatus.distilbert && modelStatus.distilbert.available) {
+                                    showStatus(`
+                                        <h3>✅ Training Completed!</h3>
+                                        <p>DistilBERT model has been successfully trained and is now available.</p>
+                                        <p><strong>Model path:</strong> ${modelStatus.distilbert.model_path}</p>
+                                        <p>You can now use this model for phishing detection.</p>
+                                    `, 'success');
+                                } else {
+                                    showStatus(`
+                                        <h3>✅ Training Completed!</h3>
+                                        <p>Training finished. Model files should be available shortly.</p>
+                                    `, 'success');
+                                }
+                                button.disabled = false;
+                                button.textContent = 'Train DistilBERT Model';
+                            } else if (status.status === 'error') {
+                                clearInterval(checkInterval);
+                                clearInterval(pollInterval);
+                                showStatus(`<h3>❌ Training Error</h3><p>${status.message}</p>`, 'error');
+                                button.disabled = false;
+                                button.textContent = 'Train DistilBERT Model';
+                            }
+                        } catch (err) {
+                            console.error('Status check error:', err);
+                        }
+                    }, 5000); // Check every 5 seconds
+                    
+                    // Stop polling after 30 minutes
+                    setTimeout(() => {
+                        clearInterval(checkInterval);
+                        clearInterval(pollInterval);
+                    }, 1800000);
+                    
+                } else if (result.status === 'already_trained') {
+                    clearInterval(pollInterval);
+                    showProgress(100);
+                    showStatus(`
+                        <h3>✅ Model Already Trained</h3>
+                        <p>${result.message}</p>
+                        <p><strong>Model path:</strong> ${result.model_path}</p>
+                        <p>The DistilBERT model is ready to use.</p>
+                    `, 'success');
+                    button.disabled = false;
+                    button.textContent = 'Train DistilBERT Model';
+                } else if (result.status === 'running') {
+                    clearInterval(pollInterval);
+                    showStatus(`
+                        <h3>⏳ Training Already Running</h3>
+                        <p>${result.message}</p>
+                        <p>Please wait for the current training to complete.</p>
+                    `, 'info');
+                    button.disabled = false;
+                    button.textContent = 'Train DistilBERT Model';
+                } else if (result.status === 'success') {
+                    clearInterval(pollInterval);
+                    showProgress(100);
+                    showStatus(`
+                        <h3>✅ Training Completed!</h3>
+                        <p><strong>Accuracy:</strong> ${(result.metrics?.accuracy * 100 || 0).toFixed(2)}%</p>
+                        <p><strong>Precision:</strong> ${(result.metrics?.precision * 100 || 0).toFixed(2)}%</p>
+                        <p><strong>Recall:</strong> ${(result.metrics?.recall * 100 || 0).toFixed(2)}%</p>
+                        <p><strong>F1-Score:</strong> ${(result.metrics?.f1 * 100 || 0).toFixed(2)}%</p>
+                        <p><strong>Model saved to:</strong> ${result.model_path || 'models/distilbert_phishing_detector'}</p>
+                    `, 'success');
+                    button.disabled = false;
+                    button.textContent = 'Train DistilBERT Model';
+                } else {
+                    clearInterval(pollInterval);
+                    const errorMsg = result.message || result.error || '{{ t("unknown_error", lang) }}';
+                    showStatus(`<h3>❌ {{ t("training_failed", lang) }}</h3><p>${errorMsg}</p>`, 'error');
+                    button.disabled = false;
+                    button.textContent = 'Train DistilBERT Model';
+                }
+            } catch (error) {
+                showStatus(`<h3>❌ Error</h3><p>${error.message}</p>`, 'error');
+            } finally {
+                button.disabled = false;
+                button.textContent = 'Train DistilBERT Model';
+            }
+        }
+    </script>
+</body>
+</html>
+

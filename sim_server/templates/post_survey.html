@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Post-Study Survey - Social Engineering AI</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        .header {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+        }
+        
+        h1 {
+            color: #2d3748;
+            font-size: 32px;
+            margin-bottom: 10px;
+        }
+        
+        .card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        
+        .form-group {
+            margin-bottom: 25px;
+        }
+        
+        .form-group label {
+            display: block;
+            color: #2d3748;
+            font-weight: 600;
+            margin-bottom: 10px;
+            font-size: 16px;
+        }
+        
+        .likert-scale {
+            display: flex;
+            justify-content: space-between;
+            gap: 10px;
+            margin-top: 10px;
+        }
+        
+        .likert-item {
+            flex: 1;
+            text-align: center;
+            padding: 15px;
+            background: #f7fafc;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .likert-item:hover {
+            background: #edf2f7;
+            transform: translateY(-2px);
+        }
+        
+        .likert-item input {
+            display: none;
+        }
+        
+        .likert-item input:checked + label {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        
+        .likert-item.selected {
+            background: #edf2f7;
+        }
+        
+        .likert-item.selected label {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        
+        .likert-item label {
+            display: block;
+            cursor: pointer;
+            font-weight: 600;
+            padding: 10px;
+            border-radius: 8px;
+        }
+        
+        .form-group textarea {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e2e8f0;
+            border-radius: 10px;
+            font-size: 16px;
+            font-family: inherit;
+            min-height: 100px;
+            resize: vertical;
+        }
+        
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102,126,234,0.1);
+        }
+        
+        .submit-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 18px 40px;
+            border: none;
+            border-radius: 12px;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            width: 100%;
+            transition: all 0.3s;
+            box-shadow: 0 5px 15px rgba(102,126,234,0.3);
+        }
+        
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(102,126,234,0.4);
+        }
+        
+        .section-title {
+            color: #2d3748;
+            font-size: 20px;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #e2e8f0;
+        }
+    </style>
+</head>
+<body>
+    {% include 'language_selector.html' %}
+    <div class="container">
+        <div class="header">
+            <h1>📋 {{ t('post_survey_title', lang) }}</h1>
+            <p style="color: #718096; margin-top: 10px;">{{ t('please_complete_after', lang) }}</p>
+        </div>
+        
+        <form id="surveyForm" onsubmit="handleSubmit(event)">
+            <div class="card">
+                <h2 class="section-title">{{ t('experience_questions', lang) }}</h2>
+                
+                <div class="form-group">
+                    <label>13. {{ t('suspicious_count', lang) }}</label>
+                    <div class="likert-scale">
+                        <div class="likert-item">
+                            <input type="radio" name="suspicious_count" value="all" required>
+                            <label>{{ t('all', lang) }}</label>
+                        </div>
+                        <div class="likert-item">
+                            <input type="radio" name="suspicious_count" value="most">
+                            <label>{{ t('most', lang) }}</label>
+                        </div>
+                        <div class="likert-item">
+                            <input type="radio" name="suspicious_count" value="half">
+                            <label>{{ t('about_half', lang) }}</label>
+                        </div>
+                        <div class="likert-item">
+                            <input type="radio" name="suspicious_count" value="few">
+                            <label>{{ t('a_few', lang) }}</label>
+                        </div>
+                        <div class="likert-item">
+                            <input type="radio" name="suspicious_count" value="none">
+                            <label>{{ t('none', lang) }}</label>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label>14. {{ t('what_made_suspicious', lang) }}</label>
+                    <textarea name="suspicious_reasons" placeholder="{{ t('enter_thoughts', lang) }}"></textarea>
+                </div>
+                
+                <div class="form-group">
+                    <label>15. {{ t('noticed_tags', lang) }}</label>
+                    <div class="likert-scale">
+                        <div class="likert-item">
+                            <input type="radio" name="noticed_tags" value="yes" required>
+                            <label>{{ t('yes', lang) }}</label>
+                        </div>
+                        <div class="likert-item">
+                            <input type="radio" name="noticed_tags" value="no">
+                            <label>{{ t('no', lang) }}</label>
+                        </div>
+                        <div class="likert-item">
+                            <input type="radio" name="noticed_tags" value="not_sure">
+                            <label>{{ t('not_sure', lang) }}</label>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label>16. {{ t('how_realistic', lang) }}</label>
+                    <div class="likert-scale">
+                        <div class="likert-item">
+                            <input type="radio" name="realistic" value="very_realistic" required>
+                            <label>{{ t('very_realistic', lang) }}</label>
+                        </div>
+                        <div class="likert-item">
+                            <input type="radio" name="realistic" value="somewhat_realistic">
+                            <label>{{ t('somewhat_realistic', lang) }}</label>
+                        </div>
+                        <div class="likert-item">
+                            <input type="radio" name="realistic" value="not_very_realistic">
+                            <label>{{ t('not_very_realistic', lang) }}</label>
+                        </div>
+                        <div class="likert-item">
+                            <input type="radio" name="realistic" value="not_realistic">
+                            <label>{{ t('not_realistic_at_all', lang) }}</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card">
+                <h2 class="section-title">{{ t('likert_scale_questions', lang) }}</h2>
+                <p style="color: #718096; margin-bottom: 20px; font-size: 14px;">
+                    {{ t('likert_scale_info', lang) }}
+                </p>
+                
+                <div class="form-group">
+                    <label>17. {{ t('felt_comfortable', lang) }}</label>
+                    <div class="likert-scale">
+                        <div class="likert-item"><input type="radio" name="comfortable" value="1" required><label>1</label></div>
+                        <div class="likert-item"><input type="radio" name="comfortable" value="2"><label>2</label></div>
+                        <div class="likert-item"><input type="radio" name="comfortable" value="3"><label>3</label></div>
+                        <div class="likert-item"><input type="radio" name="comfortable" value="4"><label>4</label></div>
+                        <div class="likert-item"><input type="radio" name="comfortable" value="5"><label>5</label></div>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label>18. {{ t('instructions_clear', lang) }}</label>
+                    <div class="likert-scale">
+                        <div class="likert-item"><input type="radio" name="instructions_clear" value="1" required><label>1</label></div>
+                        <div class="likert-item"><input type="radio" name="instructions_clear" value="2"><label>2</label></div>
+                        <div class="likert-item"><input type="radio" name="instructions_clear" value="3"><label>3</label></div>
+                        <div class="likert-item"><input type="radio" name="instructions_clear" value="4"><label>4</label></div>
+                        <div class="likert-item"><input type="radio" name="instructions_clear" value="5"><label>5</label></div>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label>19. {{ t('understood_test', lang) }}</label>
+                    <div class="likert-scale">
+                        <div class="likert-item"><input type="radio" name="understood_test" value="1" required><label>1</label></div>
+                        <div class="likert-item"><input type="radio" name="understood_test" value="2"><label>2</label></div>
+                        <div class="likert-item"><input type="radio" name="understood_test" value="3"><label>3</label></div>
+                        <div class="likert-item"><input type="radio" name="understood_test" value="4"><label>4</label></div>
+                        <div class="likert-item"><input type="radio" name="understood_test" value="5"><label>5</label></div>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label>20. {{ t('future_participation', lang) }}</label>
+                    <div class="likert-scale">
+                        <div class="likert-item"><input type="radio" name="future_participation" value="1" required><label>1</label></div>
+                        <div class="likert-item"><input type="radio" name="future_participation" value="2"><label>2</label></div>
+                        <div class="likert-item"><input type="radio" name="future_participation" value="3"><label>3</label></div>
+                        <div class="likert-item"><input type="radio" name="future_participation" value="4"><label>4</label></div>
+                        <div class="likert-item"><input type="radio" name="future_participation" value="5"><label>5</label></div>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label>21. {{ t('awareness_increased', lang) }}</label>
+                    <div class="likert-scale">
+                        <div class="likert-item"><input type="radio" name="awareness_increased" value="1" required><label>1</label></div>
+                        <div class="likert-item"><input type="radio" name="awareness_increased" value="2"><label>2</label></div>
+                        <div class="likert-item"><input type="radio" name="awareness_increased" value="3"><label>3</label></div>
+                        <div class="likert-item"><input type="radio" name="awareness_increased" value="4"><label>4</label></div>
+                        <div class="likert-item"><input type="radio" name="awareness_increased" value="5"><label>5</label></div>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label>22. {{ t('messages_believable', lang) }}</label>
+                    <div class="likert-scale">
+                        <div class="likert-item"><input type="radio" name="messages_believable" value="1" required><label>1</label></div>
+                        <div class="likert-item"><input type="radio" name="messages_believable" value="2"><label>2</label></div>
+                        <div class="likert-item"><input type="radio" name="messages_believable" value="3"><label>3</label></div>
+                        <div class="likert-item"><input type="radio" name="messages_believable" value="4"><label>4</label></div>
+                        <div class="likert-item"><input type="radio" name="messages_believable" value="5"><label>5</label></div>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label>23. {{ t('able_to_identify', lang) }}</label>
+                    <div class="likert-scale">
+                        <div class="likert-item"><input type="radio" name="able_to_identify" value="1" required><label>1</label></div>
+                        <div class="likert-item"><input type="radio" name="able_to_identify" value="2"><label>2</label></div>
+                        <div class="likert-item"><input type="radio" name="able_to_identify" value="3"><label>3</label></div>
+                        <div class="likert-item"><input type="radio" name="able_to_identify" value="4"><label>4</label></div>
+                        <div class="likert-item"><input type="radio" name="able_to_identify" value="5"><label>5</label></div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card">
+                <h2 class="section-title">{{ t('open_ended_questions', lang) }}</h2>
+                
+                <div class="form-group">
+                    <label>24. {{ t('click_influence', lang) }}</label>
+                    <textarea name="click_influence" placeholder="{{ t('enter_thoughts', lang) }}"></textarea>
+                </div>
+                
+                <div class="form-group">
+                    <label>25. {{ t('additional_comments', lang) }}</label>
+                    <textarea name="additional_comments" placeholder="{{ t('enter_thoughts', lang) }}"></textarea>
+                </div>
+                
+                <div class="form-group">
+                    <label>26. {{ t('questions_concerns', lang) }}</label>
+                    <textarea name="questions_concerns" placeholder="{{ t('enter_questions', lang) }}"></textarea>
+                </div>
+            </div>
+            
+            <div class="card">
+                <button type="submit" class="submit-btn">{{ t('submit_survey', lang) }}</button>
+            </div>
+        </form>
+    </div>
+    
+    <script>
+        // Ensure likert scale items are clickable
+        document.addEventListener('DOMContentLoaded', function() {
+            const likertItems = document.querySelectorAll('.likert-item');
+            likertItems.forEach(item => {
+                item.addEventListener('click', function(e) {
+                    const radio = this.querySelector('input[type="radio"]');
+                    if (radio && !radio.disabled) {
+                        // Uncheck all radios in the same group and remove selected class
+                        const name = radio.name;
+                        document.querySelectorAll(`input[name="${name}"]`).forEach(r => {
+                            r.checked = false;
+                            r.closest('.likert-item')?.classList.remove('selected');
+                        });
+                        // Check this radio and add selected class
+                        radio.checked = true;
+                        item.classList.add('selected');
+                        // Trigger change event
+                        radio.dispatchEvent(new Event('change', { bubbles: true }));
+                    }
+                });
+            });
+            
+            // Update selected state when radio changes
+            document.querySelectorAll('.likert-item input[type="radio"]').forEach(radio => {
+                radio.addEventListener('change', function() {
+                    const name = this.name;
+                    document.querySelectorAll(`input[name="${name}"]`).forEach(r => {
+                        r.closest('.likert-item')?.classList.remove('selected');
+                    });
+                    if (this.checked) {
+                        this.closest('.likert-item')?.classList.add('selected');
+                    }
+                });
+            });
+        });
+
+        function handleSubmit(event) {
+            event.preventDefault();
+            
+            // Validate form
+            const form = event.target;
+            if (!form.checkValidity()) {
+                form.reportValidity();
+                return;
+            }
+            
+            const formData = new FormData(form);
+            const data = Object.fromEntries(formData);
+            
+            // Check if all required fields are filled
+            const requiredFields = form.querySelectorAll('[required]');
+            let allFilled = true;
+            requiredFields.forEach(field => {
+                if (field.type === 'radio') {
+                    const name = field.name;
+                    const checked = form.querySelector(`input[name="${name}"]:checked`);
+                    if (!checked) {
+                        allFilled = false;
+                        const formGroup = field.closest('.form-group');
+                        if (formGroup) {
+                            formGroup.style.border = '2px solid #ff6b6b';
+                            formGroup.style.borderRadius = '10px';
+                            formGroup.style.padding = '15px';
+                        }
+                    }
+                } else if (!field.value.trim()) {
+                    allFilled = false;
+                    field.style.borderColor = '#ff6b6b';
+                }
+            });
+            
+            if (!allFilled) {
+                const fillRequired = '{{ t("please_fill_required", lang) }}';
+                alert(fillRequired);
+                return;
+            }
+            
+            const enterParticipantId = '{{ t("enter_participant_id", lang) }}';
+            const participantId = prompt(enterParticipantId, 'participant_001') || 'participant_001';
+            data.participant_id = participantId;
+            data.survey_type = 'post_study';
+            data.timestamp = new Date().toISOString();
+            
+            // Disable submit button
+            const submitBtn = form.querySelector('button[type="submit"]');
+            submitBtn.disabled = true;
+            const submittingText = '{{ t("loading", lang) if lang == "tr" else "Submitting..." }}';
+            submitBtn.textContent = submittingText;
+            
+            fetch('/survey/submit', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(data)
+            })
+            .then(response => {
+                if (!response.ok) {
+                    return response.json().then(err => {
+                        throw new Error(err.error || `HTTP error! status: ${response.status}`);
+                    });
+                }
+                return response.json();
+            })
+            .then(result => {
+                if (result.status === 'success' || result.status === 'submitted') {
+                    const successText = '{{ t("survey_submitted", lang) }}\n\n{{ t("thank_you_participating", lang) }}';
+                    alert(successText);
+                    window.location.href = '/';
+                } else {
+                    throw new Error(result.error || '{{ t("error", lang) }}');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                const errorText = '{{ t("error", lang) }}: ' + error.message + '\n\n{{ t("warning", lang) if lang == "tr" else "Please try again or contact the administrator." }}';
+                alert(errorText);
+                submitBtn.disabled = false;
+                submitBtn.textContent = '{{ t("submit_survey", lang) }}';
+            });
+        }
+    </script>
+</body>
+</html>
+

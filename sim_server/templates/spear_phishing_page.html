@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Spear Phishing - TEST ENVIRONMENT</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        .warning-banner {
+            background: linear-gradient(135deg, #ff6b6b 0%, #ee5a6f 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 15px;
+            margin-bottom: 25px;
+            text-align: center;
+            font-weight: 600;
+            font-size: 18px;
+            box-shadow: 0 5px 15px rgba(255,107,107,0.3);
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.02); }
+        }
+        
+        .email-container {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        
+        .email-header {
+            border-bottom: 3px solid #e2e8f0;
+            padding-bottom: 20px;
+            margin-bottom: 25px;
+        }
+        
+        .email-header h2 {
+            color: #2d3748;
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+        
+        .personalized-info {
+            background: linear-gradient(135deg, #e0e7ff 0%, #c7d2fe 100%);
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            border-left: 5px solid #667eea;
+        }
+        
+        .personalized-info strong {
+            color: #4c1d95;
+        }
+        
+        .test-tag {
+            background: linear-gradient(135deg, #fff3cd 0%, #ffeaa7 100%);
+            color: #856404;
+            padding: 15px;
+            border-left: 5px solid #ffc107;
+            border-radius: 10px;
+            margin: 20px 0;
+            font-weight: 600;
+        }
+        
+        .email-body {
+            line-height: 1.8;
+            color: #2d3748;
+            white-space: pre-wrap;
+            font-size: 16px;
+            background: #f7fafc;
+            padding: 25px;
+            border-radius: 10px;
+            margin: 25px 0;
+            border: 1px solid #e2e8f0;
+        }
+        
+        .cta-button {
+            background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
+            color: white;
+            padding: 18px 40px;
+            border: none;
+            border-radius: 12px;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 30px;
+            display: block;
+            width: 100%;
+            transition: all 0.3s;
+            box-shadow: 0 5px 15px rgba(76,175,80,0.3);
+        }
+        
+        .cta-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(76,175,80,0.4);
+        }
+        
+        .back-link {
+            display: inline-block;
+            color: white;
+            text-decoration: none;
+            padding: 12px 25px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 10px;
+            margin-bottom: 20px;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+        
+        .back-link:hover {
+            background: rgba(255,255,255,0.3);
+            transform: translateX(-5px);
+        }
+        
+        .success-message {
+            display: none;
+            background: linear-gradient(135deg, #48bb78 0%, #38a169 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 12px;
+            margin-top: 20px;
+            text-align: center;
+            font-weight: 600;
+            animation: slideIn 0.3s;
+        }
+        
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+</head>
+<body>
+    {% include 'language_selector.html' %}
+    <div class="container">
+        <a href="/" class="back-link">{{ t('back_to_dashboard', lang) }}</a>
+        
+        <div class="warning-banner">
+            ⚠️ {{ t('test_environment_warning', lang) }} ⚠️
+        </div>
+        
+        <div class="email-container">
+            <div class="email-header">
+                <h2>🎯 {{ t('scenario_001_spear', lang) if lang == 'tr' else 'Spear Phishing Email' }}</h2>
+                <p style="margin-top: 10px;">
+                    <span style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 6px 15px; border-radius: 20px; font-size: 14px; font-weight: 600;">Targeted Attack - Scenario: {{ scenario_id }}</span>
+                </p>
+            </div>
+            
+            <div class="personalized-info">
+                <strong>⚠️ PERSONALIZED INFORMATION DETECTED:</strong><br>
+                This is a simulated targeted attack that uses personalized information. 
+                In real spear-phishing, attackers use publicly available data about you.
+                <strong>[TEST ENVIRONMENT]</strong>
+            </div>
+            
+            <div class="test-tag">
+                <strong>⚠️ {{ t('test_environment_warning', lang) }}:</strong> {{ t('test_environment_simulated', lang) }}
+            </div>
+            
+            <div class="email-body">{{ phishing_text }}</div>
+            
+            <button class="cta-button" onclick="handleClick()">
+                {{ t('view_full_message', lang) if lang == 'tr' else 'Continue →' }}
+            </button>
+            
+            <div class="success-message" id="successMessage">
+                ✓ {{ t('recorded', lang) }}
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function handleClick() {
+            const enterParticipantId = '{{ t("enter_participant_id", lang) }}';
+            const participantId = prompt(enterParticipantId, 'participant_001') || 'participant_001';
+            const scenarioId = '{{ scenario_id }}';
+            const action = 'click';
+            const metadata = {
+                timestamp: new Date().toISOString(),
+                attack_type: 'spear_phishing',
+                userAgent: navigator.userAgent,
+                screenWidth: window.screen.width,
+                screenHeight: window.screen.height,
+                viewportWidth: window.innerWidth,
+                viewportHeight: window.innerHeight
+            };
+            
+            const button = document.querySelector('.cta-button');
+            button.disabled = true;
+            const recordingText = '{{ t("loading", lang) if lang == "tr" else "Recording..." }}';
+            button.textContent = recordingText;
+            
+            fetch('/click', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    participant: participantId,
+                    scenario: scenarioId,
+                    action: action,
+                    metadata: metadata
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                const successMsg = document.getElementById('successMessage');
+                successMsg.style.display = 'block';
+                const recordedText = '{{ t("recorded", lang) }}';
+                successMsg.textContent = `✓ ${recordedText}\nTimestamp: ${new Date(data.timestamp).toLocaleString()}`;
+                
+                button.disabled = false;
+                const continueText = '{{ t("view_full_message", lang) if lang == "tr" else "Continue →" }}';
+                button.textContent = continueText;
+                successMsg.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                const errorText = '{{ t("error", lang) }}: {{ t("test_environment_warning", lang) if lang == "tr" else "Error recording interaction. This is a TEST ENVIRONMENT." }}';
+                alert(errorText);
+                button.disabled = false;
+                const continueText = '{{ t("view_full_message", lang) if lang == "tr" else "Continue →" }}';
+                button.textContent = continueText;
+            });
+        }
+    </script>
+</body>
+</html>
+

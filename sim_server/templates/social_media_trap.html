@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Social Media - TEST ENVIRONMENT</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f0f2f5;
+            min-height: 100vh;
+        }
+        
+        .warning-banner {
+            background: linear-gradient(135deg, #ff6b6b 0%, #ee5a6f 100%);
+            color: white;
+            padding: 15px;
+            text-align: center;
+            font-weight: 600;
+            font-size: 14px;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+        
+        .social-container {
+            max-width: 600px;
+            margin: 20px auto;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            padding: 20px;
+        }
+        
+        .social-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #e2e8f0;
+            margin-bottom: 20px;
+        }
+        
+        .social-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 700;
+            font-size: 20px;
+        }
+        
+        .social-user-info h3 {
+            color: #2d3748;
+            font-size: 18px;
+        }
+        
+        .social-user-info p {
+            color: #718096;
+            font-size: 14px;
+        }
+        
+        .social-post {
+            margin-bottom: 20px;
+        }
+        
+        .social-post-content {
+            color: #2d3748;
+            line-height: 1.6;
+            white-space: pre-wrap;
+            margin-bottom: 15px;
+            font-size: 15px;
+        }
+        
+        .social-post-image {
+            width: 100%;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            height: 300px;
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            position: relative;
+            cursor: pointer;
+            transition: transform 0.3s;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        
+        .social-post-image:hover {
+            transform: scale(1.02);
+        }
+        
+        .social-post-image::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, rgba(102,126,234,0.1) 0%, rgba(118,75,162,0.1) 100%);
+        }
+        
+        .image-overlay {
+            position: absolute;
+            bottom: 10px;
+            right: 10px;
+            background: rgba(0,0,0,0.6);
+            color: white;
+            padding: 5px 10px;
+            border-radius: 5px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+        
+        .image-placeholder {
+            width: 100%;
+            height: 300px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            position: relative;
+            overflow: hidden;
+            cursor: pointer;
+            transition: transform 0.3s;
+        }
+        
+        .image-placeholder::before {
+            content: '';
+            position: absolute;
+            width: 200%;
+            height: 200%;
+            background: repeating-linear-gradient(
+                45deg,
+                transparent,
+                transparent 10px,
+                rgba(255,255,255,0.05) 10px,
+                rgba(255,255,255,0.05) 20px
+            );
+            animation: slide 20s linear infinite;
+        }
+        
+        @keyframes slide {
+            0% { transform: translateX(-50%) translateY(-50%); }
+            100% { transform: translateX(0%) translateY(0%); }
+        }
+        
+        .image-placeholder:hover {
+            transform: scale(1.02);
+        }
+        
+        .image-placeholder-content {
+            position: relative;
+            z-index: 1;
+            text-align: center;
+        }
+        
+        .image-placeholder-icon {
+            font-size: 48px;
+            margin-bottom: 10px;
+        }
+        
+        .social-actions {
+            display: flex;
+            gap: 20px;
+            padding-top: 15px;
+            border-top: 1px solid #e2e8f0;
+        }
+        
+        .social-action-btn {
+            background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
+            color: white;
+            padding: 12px 30px;
+            border: none;
+            border-radius: 25px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            flex: 1;
+        }
+        
+        .social-action-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(76,175,80,0.3);
+        }
+        
+        .test-tag {
+            background: linear-gradient(135deg, #fff3cd 0%, #ffeaa7 100%);
+            color: #856404;
+            padding: 12px;
+            border-left: 4px solid #ffc107;
+            border-radius: 10px;
+            margin: 15px 0;
+            font-weight: 600;
+            font-size: 12px;
+            text-align: center;
+        }
+        
+        .back-link {
+            display: inline-block;
+            color: white;
+            text-decoration: none;
+            padding: 12px 25px;
+            background: rgba(102,126,234,0.8);
+            border-radius: 10px;
+            margin: 20px;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+        
+        .back-link:hover {
+            background: rgba(102,126,234,1);
+        }
+        
+        .success-message {
+            display: none;
+            background: linear-gradient(135deg, #48bb78 0%, #38a169 100%);
+            color: white;
+            padding: 15px;
+            border-radius: 12px;
+            margin-top: 15px;
+            text-align: center;
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+    {% include 'language_selector.html' %}
+    <div class="warning-banner">
+        ⚠️ {{ t('test_environment_warning', lang) }} ⚠️
+    </div>
+    
+    <a href="/" class="back-link">{{ t('back_to_dashboard', lang) }}</a>
+    
+    <div class="social-container">
+        <div class="social-header">
+            <div class="social-avatar">SM</div>
+            <div class="social-user-info">
+                <h3>Social Media Account</h3>
+                <p>@test_account · [TEST ENVIRONMENT]</p>
+            </div>
+        </div>
+        
+        <div class="social-post">
+            <div class="social-post-content">{{ phishing_text }}</div>
+            
+            <!-- Gerçekçi görünen placeholder image - Dikkat çekici görsel -->
+            <div class="social-post-image" id="socialImage" onclick="handleImageClick()">
+                <div class="image-overlay">📸 [TEST]</div>
+            </div>
+            
+            <!-- Alternatif: CSS ile oluşturulmuş görsel (internet bağlantısı yoksa) -->
+            <div class="image-placeholder" id="fallbackImage" style="display: none;" onclick="handleImageClick()">
+                <div class="image-placeholder-content">
+                    <div class="image-placeholder-icon">📸</div>
+                    <div>{{ t('click_here', lang) if lang == 'tr' else 'Click to view' }}</div>
+                    <div style="font-size: 10px; margin-top: 5px; opacity: 0.8;">[{{ t('test_environment_warning', lang) if lang == 'tr' else 'TEST ENVIRONMENT' }}]</div>
+                </div>
+            </div>
+            
+            <div class="test-tag">
+                ⚠️ {{ t('test_environment_warning', lang) }}: {{ t('test_environment_simulated', lang) if lang == 'tr' else 'This is a simulated social media post for research purposes only.' }}
+            </div>
+            
+            <div class="social-actions">
+                <button class="social-action-btn" onclick="handleClick()">
+                    {{ t('click_here', lang) }}
+                </button>
+            </div>
+            
+            <div class="success-message" id="successMessage">
+                ✓ {{ t('recorded', lang) }}
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Gerçekçi, dikkat çekici görseller (Unsplash - ücretsiz, kaliteli)
+        const imageOptions = [
+            'https://images.unsplash.com/photo-1557804506-669a67965ba0?w=800&h=600&fit=crop&q=80', // Modern tech
+            'https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=800&h=600&fit=crop&q=80', // Business
+            'https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=800&h=600&fit=crop&q=80', // Success
+            'https://images.unsplash.com/photo-1552664730-d307ca884978?w=800&h=600&fit=crop&q=80', // Team
+            'https://images.unsplash.com/photo-1521737604893-d14cc237f11d?w=800&h=600&fit=crop&q=80' // Innovation
+        ];
+        
+        // Random görsel seç (her yüklemede farklı)
+        const randomImage = imageOptions[Math.floor(Math.random() * imageOptions.length)];
+        const socialImage = document.getElementById('socialImage');
+        socialImage.style.backgroundImage = `url('${randomImage}')`;
+        
+        // Image yükleme kontrolü
+        window.addEventListener('load', function() {
+            const img = new Image();
+            img.onerror = function() {
+                // Unsplash yüklenemezse fallback göster
+                socialImage.style.display = 'none';
+                document.getElementById('fallbackImage').style.display = 'flex';
+            };
+            img.onload = function() {
+                // Görsel yüklendi, overlay'i göster
+                socialImage.style.cursor = 'pointer';
+            };
+            img.src = randomImage;
+        });
+        
+        function handleImageClick() {
+            // Image click'i de logla
+            const enterParticipantId = '{{ t("enter_participant_id", lang) }}';
+            const participantId = prompt(enterParticipantId, 'participant_001') || 'participant_001';
+            const scenarioId = '{{ scenario_id }}';
+            const action = 'image_click';
+            const metadata = {
+                timestamp: new Date().toISOString(),
+                attack_type: 'social_media_trap',
+                interaction_type: 'image_click',
+                userAgent: navigator.userAgent
+            };
+            
+            fetch('/click', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    participant: participantId,
+                    scenario: scenarioId,
+                    action: action,
+                    metadata: metadata
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                // Show modal or alert
+                const alertText = '⚠️ {{ t("test_environment_warning", lang) }}\n\n{{ t("test_environment_simulated", lang) if lang == "tr" else "This is a simulated social media post. Image clicked and logged for research purposes. DO NOT enter real credentials!" }}';
+                alert(alertText);
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+        }
+        
+        function handleClick() {
+            const enterParticipantId = '{{ t("enter_participant_id", lang) }}';
+            const participantId = prompt(enterParticipantId, 'participant_001') || 'participant_001';
+            const scenarioId = '{{ scenario_id }}';
+            const action = 'social_media_click';
+            const metadata = {
+                timestamp: new Date().toISOString(),
+                attack_type: 'social_media_trap',
+                userAgent: navigator.userAgent,
+                screenWidth: window.screen.width,
+                screenHeight: window.screen.height,
+                platform: 'simulated_social_media'
+            };
+            
+            const button = document.querySelector('.social-action-btn');
+            button.disabled = true;
+            const recordingText = '{{ t("loading", lang) if lang == "tr" else "Recording..." }}';
+            button.textContent = recordingText;
+            
+            fetch('/click', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    participant: participantId,
+                    scenario: scenarioId,
+                    action: action,
+                    metadata: metadata
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                const successMsg = document.getElementById('successMessage');
+                successMsg.style.display = 'block';
+                const recordedText = '{{ t("recorded", lang) }}';
+                successMsg.textContent = `✓ ${recordedText}\nTimestamp: ${new Date(data.timestamp).toLocaleString()}`;
+                
+                button.disabled = false;
+                button.textContent = '{{ t("click_here", lang) }}';
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                const errorText = '{{ t("error", lang) }}: {{ t("test_environment_warning", lang) if lang == "tr" else "Error recording interaction. This is a TEST ENVIRONMENT." }}';
+                alert(errorText);
+                button.disabled = false;
+                button.textContent = '{{ t("click_here", lang) }}';
+            });
+        }
+    </script>
+</body>
+</html>
+

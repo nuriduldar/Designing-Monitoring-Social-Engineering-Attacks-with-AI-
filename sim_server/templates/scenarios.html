@@ -1,0 +1,628 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Scenarios - Social Engineering AI</title>
+    <script>
+        // Filter functions - defined in HEAD to ensure they're available before onclick handlers
+        window.filterScenarios = function(source) {
+            console.log('🔍 Filtering by source:', source);
+            
+            // Update active button
+            document.querySelectorAll('[data-filter]').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            const activeBtn = document.querySelector(`[data-filter="${source}"]`);
+            if (activeBtn) {
+                activeBtn.classList.add('active');
+            }
+            
+            // Get current type filter
+            const typeFilter = document.querySelector('[data-filter-type].active');
+            const currentType = typeFilter ? typeFilter.getAttribute('data-filter-type') : 'all';
+            
+            // Filter scenarios by source AND type
+            const cards = document.querySelectorAll('.scenario-card');
+            let visibleCount = 0;
+            
+            cards.forEach(card => {
+                const cardSource = card.getAttribute('data-source');
+                const cardLabel = card.getAttribute('data-label');
+                
+                // Check source filter
+                const sourceMatch = source === 'all' || cardSource === source;
+                // Check type filter
+                const typeMatch = currentType === 'all' || cardLabel === currentType;
+                
+                if (sourceMatch && typeMatch) {
+                    card.classList.remove('hidden');
+                    card.style.display = ''; // Ensure visible
+                    visibleCount++;
+                } else {
+                    card.classList.add('hidden');
+                    card.style.display = 'none'; // Ensure hidden
+                }
+            });
+            
+            console.log(`✅ Showing ${visibleCount} scenarios for source: ${source}`);
+            
+            // Update stats
+            const statsInfo = document.querySelector('.stats-info');
+            if (statsInfo) {
+                const allCount = {{ scenarios|length }};
+                const humanCount = {{ scenarios|selectattr('source', 'equalto', 'human')|list|length }};
+                const geminiCount = {{ scenarios|selectattr('source', 'equalto', 'gemini')|list|length }};
+                const aiCount = {{ scenarios|selectattr('source', 'equalto', 'ai')|list|length }};
+                const datasetCount = {{ scenarios|selectattr('source', 'equalto', 'dataset')|list|length }};
+                
+                statsInfo.innerHTML = `
+                    <strong>📊 Breakdown:</strong>
+                    <span data-filter="all" class="filter-stat">All: ${allCount}</span> | 
+                    <span data-filter="human" class="filter-stat">Human: ${humanCount}</span> | 
+                    <span data-filter="gemini" class="filter-stat">🤖 Gemini: ${geminiCount}</span> | 
+                    <span data-filter="ai" class="filter-stat">AI: ${aiCount}</span> | 
+                    <span data-filter="dataset" class="filter-stat">Dataset: ${datasetCount}</span>
+                    ${source !== 'all' ? `<br><strong>👁️ Showing: ${visibleCount} ${source === 'gemini' ? 'Gemini' : source === 'human' ? 'Human' : source === 'ai' ? 'AI Generated' : 'Dataset'} scenario(s)</strong>` : ''}
+                `;
+            }
+        };
+        
+        window.filterByType = function(type) {
+            console.log('🎯 Filtering by type:', type);
+            
+            // Update active button
+            document.querySelectorAll('[data-filter-type]').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            const activeBtn = document.querySelector(`[data-filter-type="${type}"]`);
+            if (activeBtn) {
+                activeBtn.classList.add('active');
+            }
+            
+            // Get current source filter
+            const sourceFilter = document.querySelector('[data-filter].active');
+            const currentSource = sourceFilter ? sourceFilter.getAttribute('data-filter') : 'all';
+            
+            // Filter scenarios by type AND source
+            const cards = document.querySelectorAll('.scenario-card');
+            let visibleCount = 0;
+            
+            cards.forEach(card => {
+                const cardSource = card.getAttribute('data-source');
+                const cardLabel = card.getAttribute('data-label');
+                
+                // Check source filter
+                const sourceMatch = currentSource === 'all' || cardSource === currentSource;
+                // Check type filter
+                const typeMatch = type === 'all' || cardLabel === type;
+                
+                if (sourceMatch && typeMatch) {
+                    card.classList.remove('hidden');
+                    card.style.display = ''; // Ensure visible
+                    visibleCount++;
+                } else {
+                    card.classList.add('hidden');
+                    card.style.display = 'none'; // Ensure hidden
+                }
+            });
+            
+            console.log(`✅ Showing ${visibleCount} ${type === 'all' ? 'scenarios' : type === 'phish' ? 'phishing' : 'legitimate'} scenarios`);
+        };
+        
+        console.log('✅ Filter functions defined in HEAD');
+    </script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .header {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+        }
+        
+        h1 {
+            color: #2d3748;
+            font-size: 32px;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .back-btn {
+            display: inline-block;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 12px 25px;
+            border-radius: 10px;
+            text-decoration: none;
+            font-weight: 600;
+            margin-top: 15px;
+            transition: transform 0.3s;
+        }
+        
+        .back-btn:hover {
+            transform: translateY(-2px);
+        }
+        
+        .scenarios-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 25px;
+        }
+        
+        .scenario-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+            transition: transform 0.3s, box-shadow 0.3s;
+            border-left: 5px solid #667eea;
+        }
+        
+        .scenario-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 50px rgba(0,0,0,0.2);
+        }
+        
+        .scenario-card h3 {
+            color: #2d3748;
+            font-size: 22px;
+            margin-bottom: 15px;
+        }
+        
+        .scenario-card .meta {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+        }
+        
+        .badge {
+            display: inline-block;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        
+        .badge.tone {
+            background: #c6f6d5;
+            color: #22543d;
+        }
+        
+        .badge.role {
+            background: #bee3f8;
+            color: #2c5282;
+        }
+        
+        .preview {
+            background: #f7fafc;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            font-size: 14px;
+            color: #4a5568;
+            line-height: 1.6;
+            max-height: 150px;
+            overflow-y: auto;
+        }
+        
+        .view-btn {
+            display: inline-block;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 12px 25px;
+            border-radius: 10px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: transform 0.3s;
+            width: 100%;
+            text-align: center;
+        }
+        
+        .view-btn:hover {
+            transform: translateY(-2px);
+        }
+        
+        .btn-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+        
+        .check-btn {
+            display: inline-block;
+            background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+            color: white;
+            padding: 12px 25px;
+            border-radius: 10px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: transform 0.3s;
+            flex: 1;
+            text-align: center;
+            border: none;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        
+        .check-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(245, 158, 11, 0.4);
+        }
+        
+        .check-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+        
+        .detection-result {
+            margin-top: 10px;
+            padding: 10px;
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        
+        .detection-result.phish {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+        
+        .detection-result.ham {
+            background: #d1fae5;
+            color: #065f46;
+        }
+        
+        .detection-result.loading {
+            background: #fef3c7;
+            color: #92400e;
+        }
+        
+        .stats-info {
+            background: rgba(102, 126, 234, 0.1);
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            color: #2d3748;
+            font-size: 14px;
+            border-left: 4px solid #667eea;
+        }
+        
+        .filters {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 25px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+        }
+        
+        .filters h3 {
+            color: #2d3748;
+            font-size: 18px;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .filter-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        
+        .filter-btn {
+            padding: 10px 20px;
+            border: 2px solid #e2e8f0;
+            background: white;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s;
+            color: #4a5568;
+        }
+        
+        .filter-btn:hover {
+            border-color: #667eea;
+            color: #667eea;
+            transform: translateY(-2px);
+        }
+        
+        .filter-btn.active {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-color: transparent;
+        }
+        
+        .filter-btn.active:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+        
+        .scenario-card.hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    {% include 'language_selector.html' %}
+    <div class="container">
+        <div class="header">
+            <h1><span>📧</span> {{ t('scenarios_title', lang) }}</h1>
+            <p style="color: #718096; margin-bottom: 15px;">{{ t('scenarios_total', lang, count=scenarios|length) }}</p>
+            <div class="stats-info">
+                <strong>📊 Breakdown:</strong>
+                {% set human_count = scenarios|selectattr('source', 'equalto', 'human')|list|length %}
+                {% set gemini_count = scenarios|selectattr('source', 'equalto', 'gemini')|list|length %}
+                {% set ai_count = scenarios|selectattr('source', 'equalto', 'ai')|list|length %}
+                {% set dataset_count = scenarios|selectattr('source', 'equalto', 'dataset')|list|length %}
+                {% set phish_count = scenarios|selectattr('label', 'equalto', 'phish')|list|length %}
+                {% set ham_count = scenarios|selectattr('label', 'equalto', 'ham')|list|length %}
+                <span data-filter="all" class="filter-stat">All: {{ scenarios|length }}</span> | 
+                <span data-filter="human" class="filter-stat">Human: {{ human_count }}</span> | 
+                <span data-filter="gemini" class="filter-stat">🤖 Gemini: {{ gemini_count }}</span> | 
+                <span data-filter="ai" class="filter-stat">AI: {{ ai_count }}</span> | 
+                <span data-filter="dataset" class="filter-stat">Dataset: {{ dataset_count }}</span>
+                <br>
+                <span style="margin-top: 10px; display: inline-block;">
+                    <span style="color: #e53e3e;">⚠️ Phishing: {{ phish_count }}</span> | 
+                    <span style="color: #38a169;">✅ Legitimate: {{ ham_count }}</span>
+                </span>
+            </div>
+            <a href="/" class="back-btn">{{ t('back_to_dashboard', lang) }}</a>
+        </div>
+        
+        <div class="filters">
+            <h3>🔍 Filter by Source</h3>
+            <div class="filter-buttons">
+                <button class="filter-btn active" data-filter="all" onclick="filterScenarios('all')">
+                    All ({{ scenarios|length }})
+                </button>
+                <button class="filter-btn" data-filter="gemini" onclick="filterScenarios('gemini')">
+                    🤖 Gemini ({{ scenarios|selectattr('source', 'equalto', 'gemini')|list|length }})
+                </button>
+                <button class="filter-btn" data-filter="human" onclick="filterScenarios('human')">
+                    👤 Human ({{ scenarios|selectattr('source', 'equalto', 'human')|list|length }})
+                </button>
+                <button class="filter-btn" data-filter="ai" onclick="filterScenarios('ai')">
+                    🤖 AI Generated ({{ scenarios|selectattr('source', 'equalto', 'ai')|list|length }})
+                </button>
+                <button class="filter-btn" data-filter="dataset" onclick="filterScenarios('dataset')">
+                    📊 Dataset ({{ scenarios|selectattr('source', 'equalto', 'dataset')|list|length }})
+                </button>
+            </div>
+        </div>
+        
+        <div class="filters" style="margin-top: 15px;">
+            <h3>🎯 Filter by Type</h3>
+            <div class="filter-buttons">
+                <button class="filter-btn" data-filter-type="all" onclick="filterByType('all')">
+                    All Types
+                </button>
+                <button class="filter-btn" data-filter-type="phish" onclick="filterByType('phish')" style="background: #fee2e2; color: #991b1b; border-color: #fc8181;">
+                    ⚠️ Phishing ({{ scenarios|selectattr('label', 'equalto', 'phish')|list|length }})
+                </button>
+                <button class="filter-btn" data-filter-type="ham" onclick="filterByType('ham')" style="background: #d1fae5; color: #065f46; border-color: #68d391;">
+                    ✅ Legitimate ({{ scenarios|selectattr('label', 'equalto', 'ham')|list|length }})
+                </button>
+            </div>
+        </div>
+        
+        <div class="scenarios-grid" id="scenariosGrid">
+            {% for scenario in scenarios %}
+            <div class="scenario-card" data-source="{{ scenario.source }}" data-label="{{ scenario.label|default('unknown') }}">
+                <h3>{{ scenario.id }}</h3>
+                <div class="meta">
+                    <span class="badge tone">{{ scenario.tone }}</span>
+                    <span class="badge role">{{ scenario.role }}</span>
+                    <span class="badge {% if scenario.source == 'human' %}role{% elif scenario.source == 'dataset' %}tone{% elif scenario.source == 'gemini' %}tone{% else %}tone{% endif %}" style="background: {% if scenario.source == 'human' %}#fef3c7; color: #92400e{% elif scenario.source == 'dataset' %}#d1fae5; color: #065f46{% elif scenario.source == 'gemini' %}#fce7f3; color: #9f1239{% else %}#dbeafe; color: #1e40af{% endif %};">
+                        {% if scenario.source == 'gemini' %}🤖 GEMINI{% else %}{{ scenario.source|upper }}{% endif %}
+                    </span>
+                    {% if scenario.label %}
+                    <span class="badge" style="background: {% if scenario.label == 'phish' %}#fee2e2; color: #991b1b{% else %}#d1fae5; color: #065f46{% endif %};">
+                        {% if scenario.label == 'phish' %}⚠️ PHISHING{% else %}✅ LEGITIMATE{% endif %}
+                    </span>
+                    {% endif %}
+                </div>
+                <div class="preview">{{ scenario.preview }}</div>
+                <div class="btn-group">
+                    <a href="/scenario/{{ scenario.id }}" class="view-btn" style="flex: 1;">{{ t('view_scenario', lang) }}</a>
+                    <button class="check-btn" onclick="checkScenarioDetection('{{ scenario.id }}')" data-scenario-id="{{ scenario.id }}" data-scenario-text="{{ scenario.text|e if scenario.text else '' }}">
+                        🔍 Check Detection
+                    </button>
+                </div>
+                <div id="result-{{ scenario.id }}" class="detection-result" style="display: none;"></div>
+            </div>
+            {% endfor %}
+        </div>
+        
+        {% if scenarios|length > 50 %}
+        <div class="pagination" id="pagination">
+            <!-- Pagination will be added via JavaScript if needed -->
+        </div>
+        {% endif %}
+        
+    </div>
+    
+    <script>
+        // Initialize - show all scenarios on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('✅ DOM loaded, initializing filters...');
+            // Ensure all cards are visible initially
+            document.querySelectorAll('.scenario-card').forEach(card => {
+                card.classList.remove('hidden');
+                card.style.display = '';
+            });
+            if (window.filterScenarios) {
+                window.filterScenarios('all');
+            }
+            if (window.filterByType) {
+                window.filterByType('all');
+            }
+        });
+        
+        // Also try immediately if DOM is already loaded
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', function() {
+                console.log('✅ DOM loaded (delayed), initializing filters...');
+                document.querySelectorAll('.scenario-card').forEach(card => {
+                    card.classList.remove('hidden');
+                    card.style.display = '';
+                });
+                if (window.filterScenarios) {
+                    window.filterScenarios('all');
+                }
+                if (window.filterByType) {
+                    window.filterByType('all');
+                }
+            });
+        } else {
+            // DOM already loaded
+            console.log('✅ DOM already loaded, initializing filters immediately...');
+            setTimeout(function() {
+                document.querySelectorAll('.scenario-card').forEach(card => {
+                    card.classList.remove('hidden');
+                    card.style.display = '';
+                });
+                if (window.filterScenarios) {
+                    window.filterScenarios('all');
+                }
+                if (window.filterByType) {
+                    window.filterByType('all');
+                }
+            }, 100);
+        }
+        
+        // Check scenario detection
+        async function checkScenarioDetection(scenarioId) {
+            const button = document.querySelector(`button[data-scenario-id="${scenarioId}"]`);
+            const resultDiv = document.getElementById(`result-${scenarioId}`);
+            
+            if (!button || !resultDiv) {
+                alert('Error: Could not find scenario elements');
+                return;
+            }
+            
+            // Get scenario text from button data attribute
+            let scenarioText = button.getAttribute('data-scenario-text');
+            
+            // If text not in attribute, fetch from API
+            if (!scenarioText || scenarioText.trim() === '') {
+                try {
+                    // Fetch scenario page and extract text
+                    const textResponse = await fetch('/scenario/' + scenarioId);
+                    const textHtml = await textResponse.text();
+                    const parser = new DOMParser();
+                    const doc = parser.parseFromString(textHtml, 'text/html');
+                    const textElement = doc.querySelector('.phishing-content, .email-body, body');
+                    scenarioText = textElement ? textElement.textContent.trim() : '';
+                } catch (e) {
+                    console.error('Error fetching scenario text:', e);
+                    alert('Error: Could not load scenario text. Please try viewing the scenario first.');
+                    return;
+                }
+            }
+            
+            if (!scenarioText || scenarioText.trim() === '') {
+                alert('Error: Scenario text is empty');
+                return;
+            }
+            
+            // Show loading
+            button.disabled = true;
+            button.innerHTML = '⏳ Analyzing...';
+            resultDiv.style.display = 'block';
+            resultDiv.className = 'detection-result loading';
+            resultDiv.innerHTML = 'Analyzing...';
+            
+            try {
+                // Test with scenario text
+                const testResponse = await fetch('/api/model/test', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        text: scenarioText
+                    })
+                });
+                
+                if (!testResponse.ok) {
+                    throw new Error('Failed to test model');
+                }
+                
+                const testResults = await testResponse.json();
+                
+                // Build result message
+                let resultHTML = '<strong>Detection Results:</strong><br>';
+                let isPhish = false;
+                let avgConfidence = 0;
+                let resultCount = 0;
+                
+                // TF-IDF + LR
+                if (testResults.tfidf_lr && testResults.tfidf_lr.available && !testResults.tfidf_lr.error) {
+                    const conf = testResults.tfidf_lr.confidence_percent || (testResults.tfidf_lr.confidence * 100);
+                    const phish = testResults.tfidf_lr.prediction === 'phish';
+                    resultHTML += `📊 TF-IDF: ${phish ? '⚠️ PHISHING' : '✅ LEGITIMATE'} (${conf.toFixed(1)}%)<br>`;
+                    if (phish) isPhish = true;
+                    avgConfidence += conf;
+                    resultCount++;
+                }
+                
+                // DistilBERT
+                if (testResults.distilbert && testResults.distilbert.available && !testResults.distilbert.error) {
+                    const conf = testResults.distilbert.confidence_percent || (testResults.distilbert.confidence * 100);
+                    const phish = testResults.distilbert.prediction === 'phish';
+                    resultHTML += `🤖 DistilBERT: ${phish ? '⚠️ PHISHING' : '✅ LEGITIMATE'} (${conf.toFixed(1)}%)<br>`;
+                    if (phish) isPhish = true;
+                    avgConfidence += conf;
+                    resultCount++;
+                }
+                
+                if (resultCount > 0) {
+                    avgConfidence = avgConfidence / resultCount;
+                    resultHTML += `<br><strong>Average: ${avgConfidence.toFixed(1)}%</strong>`;
+                }
+                
+                // Show result
+                resultDiv.className = 'detection-result ' + (isPhish ? 'phish' : 'ham');
+                resultDiv.innerHTML = resultHTML;
+                
+                // Reset button
+                button.disabled = false;
+                button.innerHTML = '🔍 Check Detection';
+                
+            } catch (error) {
+                console.error('Error:', error);
+                resultDiv.className = 'detection-result loading';
+                resultDiv.innerHTML = '❌ Error: ' + error.message;
+                button.disabled = false;
+                button.innerHTML = '🔍 Check Detection';
+            }
+        }
+    </script>
+</body>
+</html>
+
