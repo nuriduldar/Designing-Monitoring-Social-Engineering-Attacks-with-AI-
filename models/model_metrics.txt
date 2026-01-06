@@ -1,0 +1,11 @@
+TF-IDF + Logistic Regression Model Metrics
+============================================================
+Dataset: /Users/nuriduldar/Desktop/social-engineering-ai 2/data/expanded_dataset.csv
+Training samples: 640
+Test samples: 160
+
+Performance:
+  Accuracy:  1.0000 (100.00%)
+  Precision: 1.0000 (100.00%)
+  Recall:    1.0000 (100.00%)
+  F1-Score:  1.0000 (100.00%)
