@@ -1,0 +1,6 @@
+timestamp,participant_id,survey_type,age,confidence,education,email_experience,email_frequency,gender,phishing_familiarity,phishing_received,tech_comfort
+2025-12-21T22:16:32.310Z,admin_nuri,pre_study,24,somewhat_confident,bachelors,14,multiple_daily,male,very_familiar,many_times,very_comfortable
+2025-12-21T22:17:44.444Z,yaşlı_kullanıcı,pre_study,48,not_very_confident,high_school,3,less_weekly,female,not_very_familiar,once_twice,not_very_comfortable
+2025-12-21T22:20:12.136Z,kullanıcı_nuri,post_study,5,"çok güzel bir çalışma oluşmuş ,mühendis arkadaşları tebrik ediyorum.",5,stres altında kaldığım için tıkladım ,5,5,5,5,yes,daha da gelişeceğine inanıyorum.,very_realistic,few,"acele edilmesi , ikna etme çabası.",5
+2025-12-22T11:28:00.526Z,participant_001,pre_study,45,very_confident,bachelors,45,once_weekly,prefer_not_to_say,very_familiar,few_times,very_comfortable
+2025-12-22T11:28:24.507Z,participant_001,post_study,3,hj,3,hak,3,3,3,3,no,ghj,somewhat_realistic,most,ghjk,4
