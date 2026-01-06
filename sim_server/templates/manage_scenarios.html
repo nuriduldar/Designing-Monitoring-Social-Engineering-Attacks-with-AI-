@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manage Scenarios - Social Engineering AI</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .header {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+        }
+        
+        h1 {
+            color: #2d3748;
+            font-size: 32px;
+            margin-bottom: 10px;
+        }
+        
+        .back-btn {
+            display: inline-block;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 12px 25px;
+            border-radius: 10px;
+            text-decoration: none;
+            font-weight: 600;
+            margin-top: 15px;
+            transition: transform 0.3s;
+        }
+        
+        .back-btn:hover {
+            transform: translateY(-2px);
+        }
+        
+        .card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+        }
+        
+        .card h2 {
+            color: #2d3748;
+            font-size: 24px;
+            margin-bottom: 20px;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-group label {
+            display: block;
+            color: #2d3748;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+        
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e2e8f0;
+            border-radius: 10px;
+            font-size: 16px;
+            font-family: inherit;
+        }
+        
+        .form-group textarea {
+            min-height: 150px;
+            resize: vertical;
+        }
+        
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102,126,234,0.1);
+        }
+        
+        .btn {
+            padding: 12px 30px;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102,126,234,0.3);
+        }
+        
+        .scenarios-list {
+            margin-top: 30px;
+        }
+        
+        .scenario-item {
+            background: #f7fafc;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            border-left: 4px solid #667eea;
+        }
+        
+        .scenario-item h3 {
+            color: #2d3748;
+            margin-bottom: 10px;
+        }
+        
+        .scenario-meta {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 10px;
+            flex-wrap: wrap;
+        }
+        
+        .badge {
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        
+        .badge.tone {
+            background: #c6f6d5;
+            color: #22543d;
+        }
+        
+        .badge.source {
+            background: #bee3f8;
+            color: #2c5282;
+        }
+        
+        .scenario-actions {
+            margin-top: 15px;
+            display: flex;
+            gap: 10px;
+        }
+        
+        .btn-small {
+            padding: 8px 20px;
+            font-size: 14px;
+        }
+        
+        .btn-danger {
+            background: linear-gradient(135deg, #f56565 0%, #e53e3e 100%);
+            color: white;
+        }
+        
+        .btn-edit {
+            background: linear-gradient(135deg, #48bb78 0%, #38a169 100%);
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    {% include 'language_selector.html' %}
+    <div class="container">
+        <div class="header">
+            <h1>⚙️ {{ t('manage_scenarios', lang) }}</h1>
+            <p style="color: #718096; margin-bottom: 15px;">{{ t('create_edit_manage', lang) }}</p>
+            <a href="/" class="back-btn">{{ t('back_to_dashboard', lang) }}</a>
+        </div>
+        
+        <div class="card">
+            <h2>{{ t('create_new_scenario', lang) }}</h2>
+            <form id="createScenarioForm" onsubmit="handleCreate(event)">
+                <div class="form-group">
+                    <label>{{ t('scenario_id_label', lang) }}</label>
+                    <input type="text" name="scenario_id" placeholder="e.g., scenario_006" required>
+                </div>
+                
+                <div class="form-group">
+                    <label>{{ t('source_type', lang) }}</label>
+                    <select name="source" required>
+                        <option value="ai">{{ t('ai_generated', lang) }}</option>
+                        <option value="human">{{ t('human_written', lang) }}</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label>{{ t('tone', lang) }}</label>
+                    <select name="tone" required>
+                        <option value="urgent">Urgent</option>
+                        <option value="polite">Polite</option>
+                        <option value="curious">Curious</option>
+                        <option value="authoritative">Authoritative</option>
+                        <option value="friendly">Friendly</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label>{{ t('target_role', lang) }}</label>
+                    <input type="text" name="role" placeholder="e.g., employee" value="employee" required>
+                </div>
+                
+                <div class="form-group">
+                    <label>{{ t('scenario_text', lang) }}</label>
+                    <textarea name="text" placeholder="{{ t('test_environment_warning', lang) if lang == 'tr' else 'Enter message text. Must include [TEST ENVIRONMENT] tag.' }}" required></textarea>
+                </div>
+                
+                <button type="submit" class="btn btn-primary">{{ t('create_scenario', lang) }}</button>
+            </form>
+        </div>
+        
+        <div class="card">
+            <h2>{{ t('existing_scenarios', lang) }}</h2>
+            <div class="scenarios-list" id="scenariosList">
+                <p style="color: #718096; text-align: center; padding: 40px;">{{ t('loading_scenarios', lang) }}</p>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        async function loadScenarios() {
+            try {
+                const response = await fetch('/scenarios');
+                const html = await response.text();
+                const parser = new DOMParser();
+                const doc = parser.parseFromString(html, 'text/html');
+                const scenarios = Array.from(doc.querySelectorAll('.scenario-card'));
+                
+                const listDiv = document.getElementById('scenariosList');
+                const noScenariosText = '{{ t("no_scenarios_found", lang) }}';
+                if (scenarios.length === 0) {
+                    listDiv.innerHTML = `<p style="color: #718096; text-align: center; padding: 40px;">${noScenariosText}</p>`;
+                    return;
+                }
+                
+                const editText = '{{ t("edit", lang) }}';
+                const deleteText = '{{ t("delete", lang) }}';
+                
+                listDiv.innerHTML = scenarios.map(card => {
+                    const id = card.querySelector('h3').textContent;
+                    const badges = Array.from(card.querySelectorAll('.badge')).map(b => b.textContent);
+                    const preview = card.querySelector('.preview').textContent;
+                    
+                    return `
+                        <div class="scenario-item">
+                            <h3>${id}</h3>
+                            <div class="scenario-meta">
+                                ${badges.map(b => `<span class="badge tone">${b}</span>`).join('')}
+                            </div>
+                            <p style="color: #718096; margin: 10px 0;">${preview}</p>
+                            <div class="scenario-actions">
+                                <button class="btn btn-edit btn-small" onclick="editScenario('${id}')">${editText}</button>
+                                <button class="btn btn-danger btn-small" onclick="deleteScenario('${id}')">${deleteText}</button>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+            } catch (error) {
+                console.error('Error loading scenarios:', error);
+            }
+        }
+        
+        async function handleCreate(event) {
+            event.preventDefault();
+            
+            const formData = new FormData(event.target);
+            const data = Object.fromEntries(formData);
+            
+            // Ensure [TEST ENVIRONMENT] tag
+            if (!data.text.includes('[TEST ENVIRONMENT]')) {
+                data.text = `[TEST ENVIRONMENT] ${data.text} [TEST ENVIRONMENT]`;
+            }
+            
+            try {
+                const response = await fetch('/scenarios/create', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(data)
+                });
+                
+                const result = await response.json();
+                if (result.status === 'created') {
+                    alert('{{ t("scenario_created", lang) }}');
+                    event.target.reset();
+                    loadScenarios();
+                } else {
+                    const errorText = '{{ t("error", lang) }}: ' + (result.error || '{{ t("error", lang) }}');
+                    alert(errorText);
+                }
+            } catch (error) {
+                console.error('Error creating scenario:', error);
+                const errorCreatingText = '{{ t("error", lang) }}: {{ t("scenario_created", lang) if lang == "tr" else "Error creating scenario." }}';
+                alert(errorCreatingText);
+            }
+        }
+        
+        function editScenario(id) {
+            const editComingText = '{{ t("edit_functionality_coming", lang) }}';
+            alert(`${editComingText} ${id}`);
+        }
+        
+        async function deleteScenario(id) {
+            const sureDeleteText = '{{ t("sure_delete_scenario", lang) }}';
+            if (!confirm(`${sureDeleteText} "${id}"?`)) {
+                return;
+            }
+            
+            try {
+                const response = await fetch(`/scenarios/delete/${id}`, {
+                    method: 'DELETE'
+                });
+                
+                const result = await response.json();
+                if (result.status === 'deleted') {
+                    const deletedText = '{{ t("scenario_deleted", lang) }}';
+                    alert(deletedText);
+                    loadScenarios();
+                } else {
+                    const errorText = '{{ t("error", lang) }}: ' + (result.error || '{{ t("error", lang) }}');
+                    alert(errorText);
+                }
+            } catch (error) {
+                console.error('Error deleting scenario:', error);
+                const errorDeletingText = '{{ t("error_deleting_scenario", lang) }}';
+                alert(errorDeletingText);
+            }
+        }
+        
+        loadScenarios();
+    </script>
+</body>
+</html>
+

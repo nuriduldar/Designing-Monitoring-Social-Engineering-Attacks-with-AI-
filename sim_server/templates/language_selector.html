@@ -1,0 +1,92 @@
+<!-- Language Selector Component -->
+<div class="language-selector" style="position: fixed; top: 20px; right: 20px; z-index: 1000;">
+    <div class="lang-dropdown" style="position: relative;">
+        <button id="langBtn" onclick="toggleLangMenu()" style="
+            background: rgba(255, 255, 255, 0.95);
+            border: 2px solid #667eea;
+            border-radius: 25px;
+            padding: 10px 20px;
+            cursor: pointer;
+            font-weight: 600;
+            color: #667eea;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            transition: all 0.3s;
+        " onmouseover="this.style.background='#667eea'; this.style.color='white';" 
+           onmouseout="this.style.background='rgba(255, 255, 255, 0.95)'; this.style.color='#667eea';">
+            <span>🌐</span>
+            <span id="currentLang">EN</span>
+            <span>▼</span>
+        </button>
+        <div id="langMenu" style="
+            display: none;
+            position: absolute;
+            top: 100%;
+            right: 0;
+            margin-top: 5px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+            overflow: hidden;
+            min-width: 150px;
+        ">
+            <a href="#" onclick="setLanguage('en'); return false;" class="lang-option" style="
+                display: block;
+                padding: 12px 20px;
+                color: #2d3748;
+                text-decoration: none;
+                transition: background 0.2s;
+            " onmouseover="this.style.background='#f7fafc';" onmouseout="this.style.background='white';">
+                🇬🇧 English
+            </a>
+            <a href="#" onclick="setLanguage('tr'); return false;" class="lang-option" style="
+                display: block;
+                padding: 12px 20px;
+                color: #2d3748;
+                text-decoration: none;
+                transition: background 0.2s;
+            " onmouseover="this.style.background='#f7fafc';" onmouseout="this.style.background='white';">
+                🇹🇷 Türkçe
+            </a>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Get current language from page
+    const currentLang = '{{ lang|default("en") }}';
+    document.getElementById('currentLang').textContent = currentLang.toUpperCase();
+    
+    function toggleLangMenu() {
+        const menu = document.getElementById('langMenu');
+        menu.style.display = menu.style.display === 'none' ? 'block' : 'none';
+    }
+    
+    function setLanguage(lang) {
+        fetch(`/set_language/${lang}`)
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    // Reload page to apply language
+                    window.location.reload();
+                }
+            })
+            .catch(error => {
+                console.error('Language change error:', error);
+            });
+    }
+    
+    // Close menu when clicking outside
+    document.addEventListener('click', function(event) {
+        const langBtn = document.getElementById('langBtn');
+        const langMenu = document.getElementById('langMenu');
+        if (!langBtn.contains(event.target) && !langMenu.contains(event.target)) {
+            langMenu.style.display = 'none';
+        }
+    });
+</script>
+
+
+

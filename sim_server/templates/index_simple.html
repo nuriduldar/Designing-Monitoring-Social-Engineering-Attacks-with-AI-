@@ -1,0 +1,59 @@
+<!-- TEMPORARY: Simple test version -->
+<button id="generateSampleBtn" onclick="generateSampleSimple()">Generate New Sample</button>
+
+<script>
+async function generateSampleSimple() {
+    console.log('🔥 generateSampleSimple called!');
+    
+    try {
+        // Get count
+        const count = prompt('How many samples?', '1');
+        if (!count) return;
+        
+        const countNum = parseInt(count) || 1;
+        if (countNum < 1 || countNum > 10) {
+            alert('Please enter a number between 1 and 10');
+            return;
+        }
+        
+        // Disable button
+        const btn = document.getElementById('generateSampleBtn');
+        btn.disabled = true;
+        btn.textContent = 'Generating...';
+        
+        // Call API
+        const response = await fetch('/api/generate', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                tone: 'urgent',
+                role: 'employee',
+                use_gemini: true,
+                use_llama: false,
+                count: countNum
+            })
+        });
+        
+        const result = await response.json();
+        console.log('Result:', result);
+        
+        if (result.status === 'success' || result.status === 'completed') {
+            alert('✅ Success! Check scenarios page.');
+            window.location.reload();
+        } else {
+            alert('❌ Error: ' + (result.message || 'Unknown error'));
+        }
+        
+        btn.disabled = false;
+        btn.textContent = 'Generate New Sample';
+        
+    } catch (error) {
+        console.error('Error:', error);
+        alert('❌ Error: ' + error.message);
+        const btn = document.getElementById('generateSampleBtn');
+        btn.disabled = false;
+        btn.textContent = 'Generate New Sample';
+    }
+}
+</script>
+
